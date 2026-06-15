@@ -86,7 +86,6 @@ func GetVersionNumber(client string) string {
 	if client == "starknet-staking-v2" {
 		clientCommand = filepath.Join(constants.InstallStarknetDir, client, "validator")
 	}
-
 	cmdParts := strings.Split(argument, " ")
 	cmd := exec.Command(clientCommand, cmdParts...)
 	output, err := cmd.Output()

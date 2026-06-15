@@ -1,6 +1,6 @@
 # `starknode-kit` CLI Documentation
 
-**starknode-kit** is a command-line tool to help developers and node operators easily set up, manage, and maintain Ethereum and Starknet nodes.
+**starknode-kit** is a command-line tool to help developers and node operators easily set up, manage, and maintain Ethereum, Starknet, and Stellar nodes.
 
 ---
 
@@ -79,7 +79,7 @@ rm -rf ~/.config/starknode-kit
 | ------------ | ---------------------------------------------------------- |
 | `add`        | Add an Ethereum or Starknet client to the config           |
 | `completion` | Generate the autocompletion script for the specified shell |
-| `config`     | Create, show, and update your Starknet node configuration. |
+| `config`     | Create, show, and update your Starknet node configuration  |
 | `help`       | Display help about any command                             |
 | `monitor`    | Launch real-time monitoring dashboard                      |
 | `remove`     | Remove a specified resource                                |
@@ -90,6 +90,7 @@ rm -rf ~/.config/starknode-kit
 | `update`     | Check for and install client updates                       |
 | `validator`  | Manage the Starknet validator client                       |
 | `version`    | Show version of starknode-kit or a specific client         |
+| `stellar`    | Manage a Stellar Core validator node                       |
 
 ---
 
@@ -189,6 +190,96 @@ starknode-kit completion bash > /etc/bash_completion.d/starknode-kit
 
 ```bash
 starknode-kit help add
+```
+
+---
+
+## ⭐ Stellar Node
+
+`starknode-kit` includes a dedicated CLI runner for [Stellar Core](https://developers.stellar.org/docs/validators/admin-guide/running-node) (`stellar-core`) validator nodes. All Stellar commands live under the `stellar` sub-command.
+
+### Stellar Sub-commands
+
+| Sub-command                     | Description                                                  |
+| ------------------------------- | ------------------------------------------------------------ |
+| `stellar install`               | Install stellar-core via apt (Ubuntu/Debian) or Homebrew (macOS) |
+| `stellar init-db`               | Initialise the stellar-core database (run once before first start) |
+| `stellar start`                 | Start stellar-core in the background                         |
+| `stellar status`                | Show live node status via the `info` HTTP command            |
+| `stellar http-command <cmd>`    | Send any admin HTTP command to the running node              |
+| `stellar version`               | Print the installed stellar-core version                     |
+| `stellar remove`                | Remove the managed stellar-core installation                 |
+
+### Stellar Flags
+
+| Flag          | Default    | Description                                      |
+| ------------- | ---------- | ------------------------------------------------ |
+| `--network`   | `pubnet`   | Network to join: `pubnet` (mainnet) or `testnet` |
+| `--conf`      | managed    | Path to a custom `stellar-core.cfg`              |
+| `--http-port` | `11626`    | stellar-core local HTTP admin port               |
+
+### Stellar Quick Start
+
+**1. Install stellar-core**
+
+```bash
+starknode-kit stellar install
+```
+
+**2. Place your `stellar-core.cfg`**
+
+Put a valid configuration file at the managed path (printed during install), or pass `--conf /path/to/your/stellar-core.cfg` to each command.
+
+Reference: [https://developers.stellar.org/docs/validators/admin-guide/configuring](https://developers.stellar.org/docs/validators/admin-guide/configuring)
+
+**3. Initialise the database**
+
+```bash
+starknode-kit stellar init-db
+```
+
+**4. Start the node**
+
+```bash
+# Mainnet (pubnet)
+starknode-kit stellar start --network pubnet
+
+# Testnet
+starknode-kit stellar start --network testnet
+```
+
+**5. Check node status**
+
+```bash
+starknode-kit stellar status
+```
+
+**6. Send admin HTTP commands**
+
+```bash
+# Node info
+starknode-kit stellar http-command info
+
+# Connected peers
+starknode-kit stellar http-command peers
+
+# Quorum health
+starknode-kit stellar http-command quorum
+
+# SCP state
+starknode-kit stellar http-command scp
+```
+
+### Stellar Data Directories
+
+All managed Stellar data lives under:
+
+```
+~/.config/starknode-kit/stellar_clients/stellar-core/
+├── stellar-core        ← symlink to the installed binary
+├── stellar-core.cfg    ← default config location
+├── logs/               ← timestamped log files
+└── database/           ← ledger database
 ```
 
 ---
